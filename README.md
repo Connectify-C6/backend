@@ -18,3 +18,7 @@ This is the backend for the Connectify app. It is a API built with Django.
 3. Fresty Tania S
 4. M Rifqi Adli G
 5. Iqbal Pahlevi A
+
+### Acknowledgements
+
+- [requirements.txt](requirements.txt) get from [template tugas pbp](https://github.com/pbp-fasilkom-ui/assignment-repository/blob/main/requirements.txt)
