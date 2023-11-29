@@ -15,3 +15,16 @@ def show_profile_by_username(request, username):
     return JsonResponse({
         "user": user.get_data()
     })
+
+def update_profile(request, username):
+    if request.method == 'POST':
+        user = UserProfile.objects.get(user__username=username)
+        user.bio = request.POST['bio']
+        user.save()
+        return JsonResponse({
+            "user": user.get_data()
+        })
+    else:
+        return JsonResponse({
+            "Message": "Failed to update profile"
+        })

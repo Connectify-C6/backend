@@ -6,4 +6,5 @@ app_name = 'profile_user'
 urlpatterns = [
     path('', index, name='index'),
     path('<str:username>/', show_profile_by_username, name='show_profile_by_username'),
+    path('update/<str:username>/', update_profile, name='update_profile')
 ]
