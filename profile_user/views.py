@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from login.models import UserProfile
 from django.core import serializers
+import json
 
 # Create your views here.
 def index(request):
@@ -16,10 +17,13 @@ def show_profile_by_username(request, username):
         "user": user.get_data()
     })
 
+@csrf_exempt
 def update_profile(request, username):
-    if request.method == 'POST':
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        bio = data.get("bio")
         user = UserProfile.objects.get(user__username=username)
-        user.bio = request.POST['bio']
+        user.bio = bio
         user.save()
         return JsonResponse({
             "user": user.get_data()
