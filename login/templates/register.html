@@ -1,17 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Registrasi User</title>
-	</head>
-	<body>
-		<h1>Registrasi User</h1>
-		<form method="post">
-			{{ form.as_p }}
-			<button type="submit">Register</button>
-		</form>
-		<br />
-		<a href="/auth/login">Login</a>
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Registrasi User</title>
+        <script>
+            function register(event) {
+                event.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                fetch('/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({username, password}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Registrasi User</h1>
+        <form onsubmit="register(event)">
+            <p>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username">
+            </p>
+            <p>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password">
+            </p>
+            <button type="submit">Register</button>
+        </form>
+        <br />
+        <a href="/auth/login/">Login</a>
+    </body>
 </html>
