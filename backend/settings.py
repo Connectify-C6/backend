@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login'
+    'login',
+    'community',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '', # sesuaikan dengan password postgresql anda
+        'PASSWORD': 'sql2133', # sesuaikan dengan password postgresql anda
         'HOST': 'localhost',
         'PORT': '5432',     # sesuaikan dengan port postgresql anda
         'OPTIONS': {
