@@ -73,12 +73,12 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
+                user_profile = UserProfile.objects.get(user=user)
                 return JsonResponse({"message":"Login is successfully", "user_data":{
                     "username": user.username,
-                    "role": user.userprofile.role,
-                    "bio": user.userprofile.bio,
-                    "count_reported": user.userprofile.count_reported,
-                    "user_id": user.id
+                    "role": user_profile.role,
+                    "bio": user_profile.bio,
+                    "count_reported": user_profile.count_reported
                 }}, status=200)
             else:
                 return JsonResponse({"message": "User is inactive"}, status=400)
