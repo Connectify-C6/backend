@@ -63,11 +63,12 @@ def like_post(request):
                 message = "Post anda di like oleh " + author.username
                 if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
                     Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
-                Notification.objects.create(
-                    user=post.author.user,
-                    message=message,
-                    post_id=post.id,
-                )
+                if post.author.user != author:
+                    Notification.objects.create(
+                        user=post.author.user,
+                        message=message,
+                        post_id=post.id,
+                    )
                 return JsonResponse({"message": "Post liked"}, status=200)
             else:
                 post.daftar_like.add(anggota_author)
@@ -76,11 +77,12 @@ def like_post(request):
                 message = "Post anda di like oleh " + author.username
                 if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
                     Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
-                Notification.objects.create(
-                    user=post.author.user,
-                    message=message,
-                    post_id=post.id,
-                )
+                if post.author.user != author:
+                    Notification.objects.create(
+                        user=post.author.user,
+                        message=message,
+                        post_id=post.id,
+                    )
                 return JsonResponse({"message": "Post liked"}, status=200)
     else:
         return JsonResponse({"message": "user belum login"}, status=400)
@@ -115,11 +117,13 @@ def dislike_post(request):
                 message = "Post anda di dislike oleh " + author.username
                 if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
                     Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
-                Notification.objects.create(
-                    user=post.author.user,
-                    message=message,
-                    post_id=post.id,
-                )
+                # jika yang like post adalah author, maka tidak perlu ada notifikasi
+                if post.author.user != author:
+                    Notification.objects.create(
+                        user=post.author.user,
+                        message=message,
+                        post_id=post.id,
+                    )
                 return JsonResponse({"message": "Post disliked"}, status=200)
             else:
                 post.daftar_dislike.add(anggota_author)
@@ -128,11 +132,12 @@ def dislike_post(request):
                 message = "Post anda di dislike oleh " + author.username
                 if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
                     Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
-                Notification.objects.create(
-                    user=post.author.user,
-                    message=message,
-                    post_id=post.id,
-                )
+                if post.author.user != author:
+                    Notification.objects.create(
+                        user=post.author.user,
+                        message=message,
+                        post_id=post.id,
+                    )
                 return JsonResponse({"message": "Post disliked"}, status=200)
     else:
         return JsonResponse({"message": "user belum login"}, status=400)
