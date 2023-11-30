@@ -1,25 +1,30 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from login.models import UserProfile
+from django.contrib.auth.models import User
 import json
 
 # Create your views here.
 def index(request):
     return JsonResponse({"Message":"Hello this is from profile app"})
 
-
-@csrf_exempt
 def update_profile(request, username):
     if request.method == 'POST':
         data = json.loads(request.body)
         bio = data.get("bio")
         new_username = data.get("username")
-        user = UserProfile.objects.get(user__username=username)
-        user.bio = bio
-        user.username = new_username
-        user.save()
+        user_profile = UserProfile.objects.get(user__username=username)
+        user_profile.bio = bio
+        user_profile.save()
+        try:
+            user = User.objects.get(username=username)
+            user.username = new_username
+            user.save()
+        except User.DoesNotExist:
+            return JsonResponse({
+                "Message": "User not found"
+            })
         return JsonResponse({
-            "user": user.get_data()
+            "user": user_profile.get_data()
         })
     else:
         return JsonResponse({
