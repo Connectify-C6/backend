@@ -21,4 +21,5 @@ urlpatterns = [
     path('auth/',include('login.urls')),
     path('community/',include('community.urls')),
     path('post/',include('post.urls')),
+    path('notification/',include('notification.urls')),
 ]
