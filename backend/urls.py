@@ -22,4 +22,5 @@ urlpatterns = [
     path('community/',include('community.urls')),
     path('post/',include('post.urls')),
     path('notification/',include('notification.urls')),
+    path('comment/',include('comment.urls')),
 ]
