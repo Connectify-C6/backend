@@ -30,5 +30,72 @@ def create_post(request):
                 return JsonResponse({"message": "Anda bukan anggota atau komunitas tidak ditemukan"}, status=400)
     else:
         return JsonResponse({"message": "user belum login"}, status=400)
-
+    
+@csrf_exempt
+def like_post(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            post = Post.objects.get(id=post_id)
+            author = request.user
             
+            community_id = data.get("community_id")  # Get community ID from request data
+            anggota_author = Anggota.objects.get(user=author, community_id=community_id)
+
+            # check jika user sudah like post
+            if post.daftar_like.filter(user=author).exists() and Anggota.objects.filter(user=author, community_id=community_id).exists():
+                post.daftar_like.remove(anggota_author)
+                post.jumlah_like -= 1
+                post.save()
+                return JsonResponse({"message": "Post disliked"}, status=200)
+            # cek jika kondisi awalnya user dislike post
+            elif post.daftar_dislike.filter(user=author).exists() and Anggota.objects.filter(user=author, community_id=community_id).exists():
+                post.daftar_dislike.remove(anggota_author)
+                post.daftar_like.add(anggota_author)
+                post.jumlah_like += 1
+                post.jumlah_dislike -= 1
+                post.save()
+                return JsonResponse({"message": "Post liked"}, status=200)
+            else:
+                post.daftar_like.add(anggota_author)
+                post.jumlah_like += 1
+                post.save()
+                return JsonResponse({"message": "Post liked"}, status=200)
+    else:
+        return JsonResponse({"message": "user belum login"}, status=400)
+    
+@csrf_exempt
+def dislike_post(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            post = Post.objects.get(id=post_id)
+            author = request.user
+            
+            community_id = data.get("community_id")
+            anggota_author = Anggota.objects.get(user=author, community_id=community_id)
+
+            # check jika user sudah dislike post
+            if post.daftar_dislike.filter(user=author).exists() and Anggota.objects.filter(user=author, community_id=community_id).exists():
+                post.daftar_dislike.remove(anggota_author)
+                post.jumlah_dislike -= 1
+                post.save()
+                return JsonResponse({"message": "Post undisliked"}, status=200)
+            
+            # cek jika kondisi awalnya user like post
+            elif post.daftar_like.filter(user=author).exists() and Anggota.objects.filter(user=author, community_id=community_id).exists():
+                post.daftar_like.remove(anggota_author)
+                post.daftar_dislike.add(anggota_author)
+                post.jumlah_like -= 1
+                post.jumlah_dislike += 1
+                post.save()
+                return JsonResponse({"message": "Post disliked"}, status=200)
+            else:
+                post.daftar_dislike.add(anggota_author)
+                post.jumlah_dislike += 1
+                post.save()
+                return JsonResponse({"message": "Post disliked"}, status=200)
+    else:
+        return JsonResponse({"message": "user belum login"}, status=400)

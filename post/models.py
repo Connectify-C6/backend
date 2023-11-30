@@ -20,5 +20,7 @@ class Post(models.Model):
     jumlah_direport = models.IntegerField(
         default=0,
     )
+    daftar_like = models.ManyToManyField(Anggota, related_name='daftar_like')
+    daftar_dislike = models.ManyToManyField(Anggota, related_name='daftar_dislike')
     created_at = models.DateTimeField(auto_now_add=True)
 
