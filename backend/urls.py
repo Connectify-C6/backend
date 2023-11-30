@@ -21,4 +21,5 @@ urlpatterns = [
     path('auth/',include('login.urls')),
     path('community/',include('community.urls')),
     path('profile/',include('profile_user.urls')),
+    path('invitation/',include('invitation.urls')),
 ]
