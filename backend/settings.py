@@ -83,9 +83,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'lulusrpl100%', # sesuaikan dengan password postgresql anda
-        'HOST': 'db.nlopyspyltpbobrvazbs.supabase.co',
-        'PORT': '5432',     # sesuaikan dengan port postgresql anda   
+        'PASSWORD': 'sql2133', # sesuaikan dengan password postgresql anda
+        'HOST': 'localhost',
+        'PORT': '5432',     # sesuaikan dengan port postgresql anda
+        'OPTIONS': {
+            'options': '-c search_path=skylark',    # sesuaikan dengan nama database anda
+        }
     }
 }
 

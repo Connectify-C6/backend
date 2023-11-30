@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import Community, Anggota
+from invitation.models import CommunityInvitation, FriendRequest, Invitation
 from login.models import UserProfile
+from django.contrib.auth.models import User
 # import json
 from rest_framework.parsers import JSONParser
 import json
@@ -26,6 +28,7 @@ def index(request):
 @csrf_exempt
 def create_community(request):
     # check if user is authenticated
+    print(request.user.is_authenticated)
     if request.user.is_authenticated:
        # if method is post
         if request.method == "POST":
@@ -111,6 +114,51 @@ def get_community_member(request, community_id):
                                  "leader": community.leader.username,
                                  "anggota": list(user.values_list('user__username', flat=True))
                                  }, status=200)
+        else:
+            return JsonResponse({"message": "Method not allowed"}, status=400)
+    else:
+        return JsonResponse({"message": "User belum login"}, status=400)
+    
+@csrf_exempt
+def send_invitation(request):
+    # check if user is authenticated
+    if request.user.is_authenticated:
+        # if method is post
+        if request.method == "POST":
+
+            data = json.loads(request.body)
+            # get nama_community from request
+            nama_community = data.get("nama_community")
+            print(nama_community)
+            if Community.objects.filter(nama_community=nama_community).exists():
+                community = Community.objects.filter(nama_community=nama_community)[0]
+                print(community)
+                if request.user == community.leader:
+                # get receiver from request
+                    receiver_name = data.get("receiver")
+                    pesan = data.get("pesan")
+                # get community
+                    community = Community.objects.get(nama_community=nama_community)
+                # get receiver
+                    receiver = User.objects.get(username=receiver_name)
+                # check if user is already in community
+                    if Anggota.objects.filter(community=community, user=receiver).exists():
+                        return JsonResponse({"message": "User sudah bergabung dalam community ini"}, status=400)
+                    else:
+                # create community invitation
+                        community_invitation = CommunityInvitation.objects.create(
+                            community=community,
+                            receiver=receiver,
+                            sender=request.user,
+                            pesan=pesan,
+                            is_responded=False
+                        )
+                        community_invitation.save()
+                        return JsonResponse({"message": "Invitation berhasil dikirim"}, status=200)
+                else:
+                    return JsonResponse({"message": "User bukan leader dari community ini"}, status=400)
+            else:
+                return JsonResponse({"message": "Community tidak ditemukan"}, status=400)
         else:
             return JsonResponse({"message": "Method not allowed"}, status=400)
     else:
