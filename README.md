@@ -1,8 +1,8 @@
-# Connectify Backend
+# Connectify
 
 ## Description
 
-This is the backend for the Connectify app. It is a API built with Django.
+This is the source code for the Connectify app. It is built using Python Django.
 
 ## Installation
 
