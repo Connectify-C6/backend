@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Create Community</title>
+        <script>
+            function createCommunity(event) {
+                event.preventDefault();
+                const namaCommunity = document.getElementById('namaCommunity').value;
+                const detail = document.getElementById('detail').value;
+                console.log(namaCommunity);
+                fetch('/community/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({namaCommunity, detail}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Create Community</h1>
+        <form onsubmit="createCommunity(event)">
+            <label for="namaCommunity">Community Name</label>
+            <input type="text" name="namaCommunity" id="namaCommunity" required />
+            <br />
+            <label for="detail">Detail</label>
+            <input type="text" name="detail" id="detail" required />
+            <br />
+            <button type="submit">Create!</button>
+        </form>
+        <br />
+    </body>
+</html>
