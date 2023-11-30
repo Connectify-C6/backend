@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from .models import Post
 from community.models import Community, Anggota
 from login.models import UserProfile
+from notification.models import Notification
 import json
 
 @csrf_exempt
@@ -40,6 +41,7 @@ def like_post(request):
             post = Post.objects.get(id=post_id)
             author = request.user
             
+            
             community_id = data.get("community_id")  # Get community ID from request data
             anggota_author = Anggota.objects.get(user=author, community_id=community_id)
 
@@ -48,6 +50,7 @@ def like_post(request):
                 post.daftar_like.remove(anggota_author)
                 post.jumlah_like -= 1
                 post.save()
+                Notification.objects.filter(user=author, post_id=post).delete()
                 return JsonResponse({"message": "Post disliked"}, status=200)
             # cek jika kondisi awalnya user dislike post
             elif post.daftar_dislike.filter(user=author).exists() and Anggota.objects.filter(user=author, community_id=community_id).exists():
@@ -56,11 +59,24 @@ def like_post(request):
                 post.jumlah_like += 1
                 post.jumlah_dislike -= 1
                 post.save()
+                # send message to notification jika post di like
+                message = "Post anda di like oleh " + author.username
+                Notification.objects.create(
+                    user=post.author.user,
+                    message=message,
+                    post_id=post.id,
+                )
                 return JsonResponse({"message": "Post liked"}, status=200)
             else:
                 post.daftar_like.add(anggota_author)
                 post.jumlah_like += 1
                 post.save()
+                message = "Post anda di like oleh " + author.username
+                Notification.objects.create(
+                    user=post.author.user,
+                    message=message,
+                    post_id=post.id,
+                )
                 return JsonResponse({"message": "Post liked"}, status=200)
     else:
         return JsonResponse({"message": "user belum login"}, status=400)
@@ -82,6 +98,7 @@ def dislike_post(request):
                 post.daftar_dislike.remove(anggota_author)
                 post.jumlah_dislike -= 1
                 post.save()
+                Notification.objects.filter(user=author, post_id=post).delete()
                 return JsonResponse({"message": "Post undisliked"}, status=200)
             
             # cek jika kondisi awalnya user like post
@@ -91,11 +108,23 @@ def dislike_post(request):
                 post.jumlah_like -= 1
                 post.jumlah_dislike += 1
                 post.save()
+                message = "Post anda di dislike oleh " + author.username
+                Notification.objects.create(
+                    user=post.author.user,
+                    message=message,
+                    post_id=post.id,
+                )
                 return JsonResponse({"message": "Post disliked"}, status=200)
             else:
                 post.daftar_dislike.add(anggota_author)
                 post.jumlah_dislike += 1
                 post.save()
+                message = "Post anda di dislike oleh " + author.username
+                Notification.objects.create(
+                    user=post.author.user,
+                    message=message,
+                    post_id=post.id,
+                )
                 return JsonResponse({"message": "Post disliked"}, status=200)
     else:
         return JsonResponse({"message": "user belum login"}, status=400)
