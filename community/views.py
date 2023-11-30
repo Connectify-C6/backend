@@ -64,11 +64,14 @@ def create_community(request):
         return JsonResponse({"message": "User belum login"}, status=400)      
 
 @csrf_exempt   
-def join_community(request, nama_community):
+def join_community(request):
     # check if user is authenticated
     if request.user.is_authenticated:
         # if method is post
         if request.method == "POST":
+            data = json.loads(request.body)
+            # get nama_community from request
+            nama_community = data.get("nama_community")
             # get community
             community = Community.objects.get(nama_community=nama_community)
             # check if user is already in community
@@ -89,13 +92,15 @@ def join_community(request, nama_community):
     else:
         return JsonResponse({"message": "User belum login"}, status=400)
 
-def get_community_member(request, nama_community):
+@csrf_exempt
+def get_community_member(request, community_id):
     # check if user is authenticated
     if request.user.is_authenticated:
         # if method is post
         if request.method == "GET":
-            # get community
-            community = Community.objects.get(nama_community=nama_community)
+            # get community based on id
+            
+            community = Community.objects.get(id=community_id)
             # get all anggota from community
             anggota = Anggota.objects.filter(community=community)
             # get all user from anggota
