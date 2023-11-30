@@ -37,14 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login'
+    'login',
+    'profile_user',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -81,8 +82,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'lulusrpl100%', # sesuaikan dengan password postgresql anda
         'HOST': 'db.nlopyspyltpbobrvazbs.supabase.co',
-        'PORT': '5432',     # sesuaikan dengan port postgresql anda
-        
+        'PORT': '5432',     # sesuaikan dengan port postgresql anda   
     }
 }
 
