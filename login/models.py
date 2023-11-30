@@ -12,5 +12,6 @@ class UserProfile(models.Model):
             "username": self.user.username,
             "role": self.role,
             "bio": self.bio,
-            "count_reported": self.count_reported
+            "count_reported": self.count_reported,
+            "id": self.user.id
         }
