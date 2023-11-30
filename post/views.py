@@ -61,6 +61,8 @@ def like_post(request):
                 post.save()
                 # send message to notification jika post di like
                 message = "Post anda di like oleh " + author.username
+                if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
+                    Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
                 Notification.objects.create(
                     user=post.author.user,
                     message=message,
@@ -72,6 +74,8 @@ def like_post(request):
                 post.jumlah_like += 1
                 post.save()
                 message = "Post anda di like oleh " + author.username
+                if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
+                    Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
                 Notification.objects.create(
                     user=post.author.user,
                     message=message,
@@ -109,6 +113,8 @@ def dislike_post(request):
                 post.jumlah_dislike += 1
                 post.save()
                 message = "Post anda di dislike oleh " + author.username
+                if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
+                    Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
                 Notification.objects.create(
                     user=post.author.user,
                     message=message,
@@ -120,6 +126,8 @@ def dislike_post(request):
                 post.jumlah_dislike += 1
                 post.save()
                 message = "Post anda di dislike oleh " + author.username
+                if Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).exists():
+                    Notification.objects.filter(user=post.author.user, post_id=post.id, message=message).delete()
                 Notification.objects.create(
                     user=post.author.user,
                     message=message,
