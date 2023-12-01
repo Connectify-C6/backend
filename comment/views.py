@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Comment, Reply
 from community.models import Anggota
 from post.models import Post
+from notification.models import Notification
 
 def get_comments(request, id):
     data=[]
@@ -14,7 +15,7 @@ def get_comments(request, id):
     for comment in comments:
         data.append({
             "pk" : comment.pk,
-            "author" : comment.author.user.first_name,
+            "author" : comment.author.user,
             "content" : comment.content,
             "date" : comment.created_at
         })
@@ -28,7 +29,7 @@ def get_replies(request, id):
     for reply in replies:
         data.append({
             "pk" : reply.pk,
-            "author" : reply.author.user.first_name,
+            "author" : reply.author.user,
             "content" : reply.content,
             "date" : reply.created_at
         })
@@ -37,9 +38,10 @@ def get_replies(request, id):
 @csrf_exempt
 def create_comment(request, id):
     if request.user.is_authenticated:
+        user = request.user
         if request.method == "POST":
             post = Post.objects.get(pk=id)
-            author = Anggota.objects.get(user=request.user)
+            author = Anggota.objects.get(user=user)
             content = (json.loads(request.body)
                        .get('content'))
             
@@ -49,6 +51,15 @@ def create_comment(request, id):
                     content = content,
                 )
             new_comment.save()
+            
+            # create notification
+            if user != post.author.user:
+                notif_to_poster = Notification(
+                    user = post.author.user,
+                    message = f"Post Anda dikomentari {user.username}",
+                    post = post
+                    )
+                notif_to_poster.save()
             
             return JsonResponse(
                 {"message": "Comment berhasil dibuat"}, 
@@ -68,9 +79,10 @@ def delete_comment(request, id):
 @csrf_exempt
 def create_reply(request, id):
     if request.user.is_authenticated:
+        this_user = request.user
         if request.method == "POST":
             comment = Comment.objects.get(pk=id)
-            author = Anggota.objects.get(user=request.user)
+            author = Anggota.objects.get(user=this_user)
             content = (json.loads(request.body)
                        .get('content'))
             
@@ -80,6 +92,15 @@ def create_reply(request, id):
                     content = content,
                 )
             new_reply.save()
+            
+            # create notification
+            if this_user != comment.author.user:
+                notif_to_commenter = Notification(
+                    user = comment.author.user,
+                    message = f"Comment Anda dibalas oleh {this_user.username}",
+                    post = comment.post
+                    )
+                notif_to_commenter.save()
             
             return JsonResponse(
                 {"message": "Reply berhasil dibuat"}, 
@@ -91,7 +112,7 @@ def create_reply(request, id):
 
 @csrf_exempt
 def delete_reply(request, id):
-    this_comment = Comment.objects.get(pk=id)
-    this_comment.delete()
+    this_reply = Reply.objects.get(pk=id)
+    this_reply.delete()
     return redirect('')
     
