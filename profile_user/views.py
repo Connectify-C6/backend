@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import redirect, render
 from login.models import UserProfile
 from django.contrib.auth.models import User
 import json
@@ -6,6 +7,17 @@ import json
 # Create your views here.
 def index(request):
     return JsonResponse({"Message":"Hello this is from profile app"})
+
+def show_form_update_profile(request):
+    if request.user.is_authenticated:
+        user = UserProfile.objects.get(user__username=request.user)
+        print(user.get_data())
+        context = {
+            "user": user.get_data()
+        }
+        return render(request, 'form_update_profile.html', context)
+    else:
+        return redirect('login:login_user')
 
 def update_profile(request, username):
     if request.method == 'POST':
@@ -24,16 +36,17 @@ def update_profile(request, username):
                 "Message": "User not found"
             })
         return JsonResponse({
-            "user": user_profile.get_data()
+            "redirect_url": f'/profile/{new_username}/'
         })
+        return redirect('profile_user:get_profile_by_username', username=new_username)
     else:
-        return JsonResponse({
-            "Message": "Failed to update profile"
-        })
+        return redirect('profile_user:show_form_update_profile')
 
 def get_profile_by_username(request, username):
+    print(request.user)
+    print(request.user.is_authenticated)
     user = UserProfile.objects.get(user__username=username)
-    print(user.get_data())
-    return JsonResponse({
+    context = {
         "user": user.get_data()
-    })
+    }
+    return render(request, 'profile.html', context)
