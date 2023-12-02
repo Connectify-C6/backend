@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'login',
     'community',
     'profile_user',
-
+    'post',
+    'notification',
+    'comment',
 ]
 
 MIDDLEWARE = [
