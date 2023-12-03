@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Reports</title>
+</head>
+<body>
+    <h1>View Reports</h1>
+    <ul>
+        {% for report in reports %}
+            <li>
+                <strong>Reported User:</strong> {{ report.reported_user.username }}<br>
+                <strong>Reporter:</strong> {{ report.reporter.username }}<br>
+                <strong>Reason:</strong> {{ report.reason }}<br>
+            </li>
+        {% empty %}
+            <li>No reports found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
