@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'login',
     'community',
     'profile_user',
+    'report',
     'post',
     'notification',
     'comment',
