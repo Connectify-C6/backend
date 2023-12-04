@@ -22,4 +22,7 @@ urlpatterns = [
     path('community/',include('community.urls')),
     path('profile/',include('profile_user.urls')),
     path('report/',include('report.urls')),
+    path('post/',include('post.urls')),
+    path('notification/',include('notification.urls')),
+    path('comment/',include('comment.urls')),
 ]

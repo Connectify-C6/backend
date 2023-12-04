@@ -1,45 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login User</title>
-        <script>
-            function login(event) {
-                event.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                fetch('/auth/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({username, password}),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        alert(data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            }
-        </script>
-    </head>
-    <body>
-        <h1>Login User</h1>
-        <form onsubmit="login(event)">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" placeholder="Username" required />
-            <br />
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" placeholder="Password" required />
-            <br />
-            <button type="submit">Login</button>
-        </form>
-        <br />
-        <a href="/auth/register">Register</a>
-    </body>
-</html>
+{% extends 'base.html' %} {% load static %} {% block meta %}
+<title>Login User</title>
+<script>
+	function login(event) {
+		event.preventDefault();
+		const username = document.getElementById("username").value;
+		const password = document.getElementById("password").value;
+		fetch("/auth/login/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ username, password }),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.message) {
+					alert(data.message);
+				}
+			})
+			.catch((error) => {
+				console.error("Error:", error);
+			});
+	}
+</script>
+{% endblock meta %} {% block content %}
+<div class="h-[100vh] flex flex-col justify-center items-center">
+	<h1 class="text-2xl font-bold mb-2">Login User</h1>
+	<form class="flex flex-col" onsubmit="login(event)">
+		<label for="username">Username</label>
+		<input
+			type="text"
+			name="username"
+			id="username"
+			placeholder="Username"
+			class="px-4 py-2 rounded-md border-2"
+			required
+		/>
+		<label class="mt-1" for="password">Password</label>
+		<input
+			type="password"
+			name="password"
+			id="password"
+			placeholder="Password"
+			class="px-4 py-2 rounded-md border-2"
+			required
+		/>
+		<button type="submit" class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white">Login</button>
+	</form>
+	<br />
+	<p>Doesn't have account yet? <a href="/auth/register" class="text-blue-500">Register</a></p>
+</div>
+{% endblock content %}
