@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'community',
     'profile_user',
     'invitation',
-
+    'report',
+    'post',
+    'notification',
+    'comment',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +62,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,12 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'sql2133', # sesuaikan dengan password postgresql anda
-        'HOST': 'localhost',
-        'PORT': '5432',     # sesuaikan dengan port postgresql anda
-        'OPTIONS': {
-            'options': '-c search_path=skylark',    # sesuaikan dengan nama database anda
-        }
+        'PASSWORD': 'lulusrpl100%', # sesuaikan dengan password postgresql anda
+        'HOST': 'db.nlopyspyltpbobrvazbs.supabase.co',
+        'PORT': '5432',     # sesuaikan dengan port postgresql anda   
     }
 }
 
