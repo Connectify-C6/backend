@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-pgr%2-&rt)6y=ch7qm&_0k@^-+ep*qnvc*&hq$+y8qy&wzz6=h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["connectify-c6.up.railway.app", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ['connectify-c6.up.railway.app', 'localhost']
 
 
 # Application definition
