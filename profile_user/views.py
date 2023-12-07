@@ -13,7 +13,7 @@ def show_form_update_profile(request):
         user = UserProfile.objects.get(user__username=request.user)
         print(user.get_data())
         context = {
-            "user": user.get_data()
+            "bio": user.bio,    
         }
         return render(request, 'form_update_profile.html', context)
     else:
