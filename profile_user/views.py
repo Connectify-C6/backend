@@ -47,6 +47,7 @@ def get_profile_by_username(request, username):
     print(request.user.is_authenticated)
     user = UserProfile.objects.get(user__username=username)
     context = {
-        "user": user.get_data()
+        "role": user.role,
+        "bio": user.bio,
     }
     return render(request, 'profile.html', context)
