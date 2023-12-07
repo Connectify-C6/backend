@@ -52,46 +52,49 @@
 	}
 </script>
 {% endblock meta %} {% block content %}
-<div class="h-[100vh] flex flex-col items-center p-10">
-	<a
-		href="/profile/{{user.username}}"
-		class="flex flex-row items-center justify-center bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-	>
+<div class="min-h-screen flex flex-col items-center p-10">
+	<a href="/profile/{{user.username}}" class="flex items-center mb-4 text-blue-500 hover:text-blue-700">
 		<i class="fa fa-angle-double-left" style="font-size: 24px"></i>
-		<p>&nbspBack</p>
+		<p class="text-sm">&nbspBack</p>
 	</a>
-	<form onsubmit="updateProfile(event)">
-		<div class="mt-3 text-lg flex flex-col justify-center">
-			<div class="text-3xl font-bold mb-5">Update My Profile</div>
+
+	<form onsubmit="updateProfile(event)" class="max-w-md w-full">
+		<div class="bg-white p-6 rounded-lg shadow-md mb-6">
+			<h1 class="text-3xl font-bold mb-5">Update My Profile</h1>
+
 			<div class="mb-4">
-				<label class="block text-gray-700 text-sm font-bold mb-2" for="username"> Username </label>
+				<label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username</label>
 				<input
-					class="px-4 py-2 rounded-md border-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					id="username"
 					type="text"
 					placeholder="Username"
 					value="{{user.username}}"
 					required
+					class="w-full px-4 py-2 rounded-md border-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 				/>
 			</div>
+
 			<div class="mb-4">
-				<label class="block text-gray-700 text-sm font-bold mb-2" for="bio"> Bio </label>
+				<label for="bio" class="block text-gray-700 text-sm font-bold mb-2">Bio</label>
 				<textarea
-					class="rounded border-2 w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					id="bio"
-					type="text"
 					placeholder="Bio"
 					required
-				>{{user.bio}}</textarea>
+					class="w-full rounded border-2 py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+				>
+{{user.bio}}</textarea
+				>
 			</div>
+
 			<button
 				id="updateButton"
 				type="submit"
-				class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white"
+				class="w-full px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white"
 			>
 				Update Profile
 			</button>
 		</div>
 	</form>
 </div>
+
 {% endblock content %}
