@@ -1,8 +1,17 @@
 {% extends 'base.html' %} {% load static %} {% block meta %}
 <title>Update Profile</title>
+<style>
+	#updateButton.loading {
+		cursor: not-allowed;
+		opacity: 0.7;
+	}
+</style>
 <script>
 	function updateProfile(event) {
 		event.preventDefault();
+		const updateButton = document.getElementById("updateButton");
+		updateButton.disabled = true; // Disable the button to prevent multiple submissions
+		updateButton.classList.add("loading"); // Add loading class to the button
 		const username = document.getElementById("username").value;
 		const bio = document.getElementById("bio").value;
 		const updatePath = "/profile/update/{{user.username}}/";
@@ -17,18 +26,33 @@
 			.then((data) => {
 				console.log(data);
 				if (data.message) {
-					alert(data.message);
+					showAlert("User not found!", "error");
 				} else if (data.redirect_url) {
+					showAlert("Update profile success!", "success");
 					window.location.href = data.redirect_url;
 				}
 			})
 			.catch((error) => {
 				console.error("Error:", error);
+				showAlert("An error occurred during the update", "error");
+			})
+			.finally(() => {
+				updateButton.disabled = false; // Enable the button after the request is complete
+				updateButton.classList.remove("loading"); // Remove loading class
 			});
+	}
+	function showAlert(message, type) {
+		Toastify({
+			text: message,
+			duration: 3000,
+			gravity: "bottom",
+			position: "right",
+			backgroundColor: type === "success" ? "#4CAF50" : "#F44336",
+		}).showToast();
 	}
 </script>
 {% endblock meta %} {% block content %}
-<div class="h-[100vh] bg-red-200 flex flex-col items-center p-10">
+<div class="h-[100vh] flex flex-col items-center p-10">
 	<a
 		href="/profile/{{user.username}}"
 		class="flex flex-row items-center justify-center bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
@@ -42,26 +66,29 @@
 			<div class="mb-4">
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="username"> Username </label>
 				<input
-					class="rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					class="px-4 py-2 rounded-md border-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					id="username"
 					type="text"
 					placeholder="Username"
 					value="{{user.username}}"
+					required
 				/>
 			</div>
 			<div class="mb-4">
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="bio"> Bio </label>
 				<textarea
-					class="rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					class="rounded border-2 w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 					id="bio"
 					type="text"
 					placeholder="Bio"
-				>
-{{user.bio}}
-				</textarea
-				>
+					required
+				>{{user.bio}}</textarea>
 			</div>
-			<button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
+			<button
+				id="updateButton"
+				type="submit"
+				class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white"
+			>
 				Update Profile
 			</button>
 		</div>
