@@ -1,8 +1,17 @@
 {% extends 'base.html' %} {% load static %} {% block meta %}
 <title>Update Profile</title>
+<style>
+	#updateButton.loading {
+		cursor: not-allowed;
+		opacity: 0.7;
+	}
+</style>
 <script>
 	function updateProfile(event) {
 		event.preventDefault();
+		const updateButton = document.getElementById("updateButton");
+		updateButton.disabled = true; // Disable the button to prevent multiple submissions
+		updateButton.classList.add("loading"); // Add loading class to the button
 		const username = document.getElementById("username").value;
 		const bio = document.getElementById("bio").value;
 		const updatePath = "/profile/update/{{user.username}}/";
@@ -26,14 +35,18 @@
 			.catch((error) => {
 				console.error("Error:", error);
 				showAlert("An error occurred during the update", "error");
+			})
+			.finally(() => {
+				updateButton.disabled = false; // Enable the button after the request is complete
+				updateButton.classList.remove("loading"); // Remove loading class
 			});
 	}
 	function showAlert(message, type) {
 		Toastify({
 			text: message,
 			duration: 3000,
-			gravity: "bottom", // show the toast at the bottom
-			position: "right", // show the toast at the right
+			gravity: "bottom",
+			position: "right",
 			backgroundColor: type === "success" ? "#4CAF50" : "#F44336",
 		}).showToast();
 	}
@@ -71,7 +84,11 @@
 					required
 				>{{user.bio}}</textarea>
 			</div>
-			<button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
+			<button
+				id="updateButton"
+				type="submit"
+				class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white"
+			>
 				Update Profile
 			</button>
 		</div>
