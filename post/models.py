@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Post(models.Model):
     isi = models.TextField()
     author = models.ForeignKey(Anggota, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
     jumlah_direport = models.IntegerField(
         default=0,
     )
