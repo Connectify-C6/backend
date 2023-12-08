@@ -7,21 +7,40 @@ from login.models import UserProfile
 from notification.models import Notification
 import json
 
+def get_posts_in_community(request, community_name):
+    if request.method == "GET":
+        data = []
+        community = Community.objects.get(nama_community=community_name)
+        posts = Post.objects.filter(community=community)
+        
+        for post in posts:
+            data.append({
+            "pk" : post.pk,
+            "author" : post.author.user.username,
+            "isi" : post.isi,
+            "jumlah_like" : post.jumlah_like,
+            "jumlah_dislike" : post.jumlah_dislike,
+            "jumlah_komen" : post.jumlah_komen,
+            "created_at" : post.created_at,
+        })
+        return JsonResponse(data, safe=False)
+
 @csrf_exempt
-def create_post(request):
+def create_post(request, community_name):
     if request.user.is_authenticated:
         if request.method == "POST":
             data = json.loads(request.body)
             isi = data.get("isi")
-            community_id = data.get("community_id")  # Get community ID from request data
+            community = Community.objects.get(nama_community=community_name)  # Get community ID from request data
             author = request.user
 
             # Check if author is a member of the specified community
-            if Anggota.objects.filter(user=author, community_id=community_id).exists():
-                anggota = Anggota.objects.get(user=author, community_id=community_id)
+            if Anggota.objects.filter(user=author, community=community).exists():
+                anggota = Anggota.objects.get(user=author, community=community)
                 post = Post.objects.create(
                     isi=isi,
                     author=anggota,
+                    community=community
                 )
                 return JsonResponse({"message": "Post berhasil dibuat",
                                     "isi": post.isi,
