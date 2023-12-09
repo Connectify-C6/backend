@@ -24,13 +24,13 @@
                 <div class="form-group">
                   <textarea rows="3" cols="70" name="body" id="body" class="form-control" required></textarea>
                 </div>
-        
                 <div id="formbutton-position">
                   <button class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white" 
-                  type="submit" 
+                  id="submit-post" type="button" 
                   style="margin-top: 10px;"> add post </button>
                 </div>
-              </form> 
+              </form>
+              
             </div>
 
             {% for post in posts %}
@@ -42,8 +42,10 @@
                       <p class="card-text">{{post.isi}}</p>
                       
                       <div class="m-2 text-end">
-                        <i class="bi bi-hand-thumbs-up p-2">{{post.jumlah_like}}</i>
-                        <i class="bi bi-hand-thumbs-down p-2">{{post.jumlah_dislike}}</i>
+                        <button id="like-button-{{ post.id }}" class="like-button">Like</button>
+                        <span id="like-count-{{ post.id }}">{{ post.jumlah_like }}</span>
+                        <button id="dislike-button-{{ post.id }}" class="dislike-button">Dislike</button>
+                        <span id="dislike-count-{{ post.id }}">{{ post.jumlah_dislike }}</span>
                         <i class="bi bi-chat-right p-2">{{post.jumlah_komen}}</i>
                       </div>
                     </div>
@@ -63,5 +65,88 @@
     </div>
   </div>
 </div>
+<script>
+  document.getElementById('submit-post').addEventListener('click', function(e){
+      e.preventDefault();
+  
+      var body = document.getElementById('body').value;
+      var communityName = '{{ community.nama_community }}'.replace(/ /g, '%20'); // Adjust if your community names include spaces or special characters
+  
+      var formData = new FormData();
+      formData.append('isi', body);
+  
+      fetch(`/post/${communityName}/create/`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if(data.message === "Post berhasil dibuat"){
+              window.location.href = `/post/${communityName}/${data.post_id}/`;
+          } else {
+              alert(data.message);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  // Handling Like Button Clicks
+  document.querySelectorAll('.like-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+       e.preventDefault();
+       const postId = this.id.split('-')[3];
+       fetch(`/post/${postId}/like/`, {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          }
+       })
+       .then(response => response.json())
+       .then(data => {
+           if(data.status === 'success') {
+               document.getElementById(`like-count-${postId}`).innerText = data.new_like_count;
+           } else {
+               alert(data.message);
+           }
+       })
+       .catch(error => console.error('Error:', error));
+    });
+  });
+
+  // Handling Dislike Button Clicks
+  document.querySelectorAll('.dislike-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+       e.preventDefault();
+       const postId = this.id.split('-')[3];
+       fetch(`/post/${postId}/dislike/`, {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          }
+       })
+       .then(response => response.json())
+       .then(data => {
+           if(data.status === 'success') {
+               document.getElementById(`dislike-count-${postId}`).innerText = data.new_dislike_count;
+           } else {
+               alert(data.message);
+           }
+       })
+       .catch(error => console.error('Error:', error));
+    });
+  });
+
+ 
+
+  
+  </script>
+
+  
+  
+  
+  
 
 {% endblock content %}
+

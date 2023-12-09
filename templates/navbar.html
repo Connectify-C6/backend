@@ -60,7 +60,22 @@
             <span class="ml-2">Profile</span>
           </a>
         </li>
-    
+        <li class="flex items-center relative">
+          <button id="notificationButton" class="flex items-center focus:outline-none" aria-label="Notifications">
+              <!-- Notification bell icon (can be an SVG or an icon from a library) -->
+              <svg width="20" weight="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 6.5C21 8.43 19.43 10 17.5 10C15.57 10 14 8.43 14 6.5C14 4.57 15.57 3 17.5 3C19.43 3 21 4.57 21 6.5ZM19 11.79C18.5 11.92 18 12 17.5 12C16.0421 11.9974 14.6447 11.417 13.6138 10.3862C12.583 9.35529 12.0026 7.95788 12 6.5C12 5.03 12.58 3.7 13.5 2.71C13.3185 2.48754 13.0897 2.30837 12.8302 2.18555C12.5707 2.06272 12.2871 1.99933 12 2C10.9 2 10 2.9 10 4V4.29C7.03 5.17 5 7.9 5 11V17L3 19V20H21V19L19 17V11.79ZM12 23C13.11 23 14 22.11 14 21H10C10 21.5304 10.2107 22.0391 10.5858 22.4142C10.9609 22.7893 11.4696 23 12 23Z" fill="black"/>
+              </svg>
+              <span class="ml-2">Notification</span>
+          </button>
+        
+          <div id="notificationMenu" class="hidden absolute right-10 top-10 mt-2 w-64 bg-white rounded-md shadow-lg overflow-hidden z-10">
+            <div class="py-2" id="notificationContainer">
+                <!-- Placeholder for notifications will be dynamically added here -->
+                <p id="noNotifications" class="text-center text-gray-500 hidden">No notifications</p>
+            </div>
+          </div>
+        </li>
         <!-- Logout -->
         <li>
           <a href="/auth/logout/" class="flex items-center py-2 pr-4 pl-3 rounded md:bg-transparent text-gray-700 hover:text-red-400 md:p-2">
@@ -76,4 +91,64 @@
     </div>
   </div>
 </nav>
-  
+
+
+<script>
+  // JavaScript to handle notification menu toggle and fetching notifications
+  document.getElementById('notificationButton').addEventListener('click', function() {
+      var menu = document.getElementById('notificationMenu');
+      menu.classList.toggle('hidden');
+      fetchNotifications(); // Fetch notifications when the menu is opened
+  });
+
+function fetchNotifications() {
+  fetch('/notification/')
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById('notificationContainer');
+      const noNotifications = document.getElementById('noNotifications');
+
+      if (data.notifications && data.notifications.length > 0) {
+        // Hide 'no notifications' message
+        noNotifications.classList.add('hidden');
+
+        data.notifications.forEach(notification => {
+          // Check if the notification is already displayed
+          if (!container.querySelector(`[data-id="${notification.id}"]`)) {
+            const notifElement = document.createElement('div');
+            notifElement.setAttribute('data-id', notification.id);
+            notifElement.classList.add('flex', 'items-center', 'text-gray-700', 'px-4', 'py-2');
+
+            let iconSvg = '';
+            if (notification.message.includes("di like")) {
+              iconSvg = `<svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 9C22 8.46957 21.7893 7.96086 21.4142 7.58579C21.0391 7.21071 20.5304 7 20 7H13.68L14.64 2.43C14.66 2.33 14.67 2.22 14.67 2.11C14.67 1.7 14.5 1.32 14.23 1.05L13.17 0L6.59 6.58C6.22 6.95 6 7.45 6 8V18C6 18.5304 6.21071 19.0391 6.58579 19.4142C6.96086 19.7893 7.46957 20 8 20H17C17.83 20 18.54 19.5 18.84 18.78L21.86 11.73C21.95 11.5 22 11.26 22 11V9ZM0 20H4V8H0V20Z" fill="#21D19F"/>
+                </svg>`;
+            } else if (notification.message.includes("dislike")) {
+              iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.27 8.485L20.975 12.565C21.0164 12.8041 21.005 13.0494 20.9417 13.2837C20.8784 13.518 20.7646 13.7356 20.6084 13.9213C20.4522 14.1071 20.2573 14.2564 20.0374 14.359C19.8174 14.4615 19.5777 14.5148 19.335 14.515H14.154C14.0331 14.515 13.9136 14.5413 13.8039 14.5921C13.6942 14.6429 13.5968 14.7169 13.5186 14.8091C13.4404 14.9013 13.3832 15.0095 13.351 15.126C13.3187 15.2426 13.3123 15.3647 13.332 15.484L13.995 19.529C14.1028 20.1861 14.0722 20.8585 13.905 21.503C13.766 22.036 13.355 22.465 12.813 22.639L12.668 22.686C12.34 22.791 11.983 22.766 11.674 22.618C11.508 22.5393 11.3612 22.4253 11.2438 22.284C11.1263 22.1427 11.0411 21.9776 10.994 21.8L10.518 19.966C10.3665 19.3824 10.1463 18.8188 9.86201 18.287C9.44701 17.51 8.80501 16.887 8.13701 16.312L6.69801 15.072C6.49825 14.8996 6.34224 14.6823 6.24281 14.4378C6.14337 14.1934 6.10334 13.9289 6.12601 13.666L6.93801 4.273C6.9738 3.85759 7.16405 3.4707 7.4712 3.18873C7.77835 2.90676 8.18006 2.75021 8.59701 2.75H13.245C16.727 2.75 19.698 5.176 20.27 8.485Z" fill="black"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M2.96799 15.265C3.16125 15.2735 3.3503 15.2069 3.49565 15.0793C3.641 14.9516 3.73141 14.7727 3.74799 14.58L4.71799 3.344C4.73442 3.17668 4.71657 3.00776 4.66553 2.84757C4.61449 2.68738 4.53133 2.53928 4.42113 2.4123C4.31093 2.28533 4.176 2.18215 4.02459 2.10907C3.87318 2.03599 3.70846 1.99455 3.54049 1.98726C3.37252 1.97998 3.20483 2.00702 3.04766 2.06672C2.89049 2.12642 2.74714 2.21753 2.62637 2.33449C2.50559 2.45145 2.40992 2.5918 2.34521 2.74698C2.2805 2.90215 2.2481 3.06888 2.24999 3.237V14.516C2.24981 14.7095 2.32442 14.8956 2.45822 15.0353C2.59203 15.1751 2.77467 15.2567 2.96799 15.265Z" fill="black"/>
+                </svg>`;
+            } else if (notification.message.includes("komentar")) {
+              iconSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 14H18V12H6V14ZM6 11H18V9H6V11ZM6 8H18V6H6V8ZM4 18C3.45 18 2.97933 17.8043 2.588 17.413C2.19667 17.0217 2.00067 16.5507 2 16V4C2 3.45 2.196 2.97933 2.588 2.588C2.98 2.19667 3.45067 2.00067 4 2H20C20.55 2 21.021 2.196 21.413 2.588C21.805 2.98 22.0007 3.45067 22 4V22L18 18H4Z" fill="black"/>
+                </svg>
+                `;
+            }
+
+            notifElement.innerHTML = `${notification.message} ${iconSvg}`;
+            container.appendChild(notifElement);
+          }
+        });
+      } else {
+        // Show 'no notifications' message if there are no notifications
+        if (!container.hasChildNodes()) {
+          noNotifications.classList.remove('hidden');
+        }
+      }
+    });
+}
+
+
+
+</script>
