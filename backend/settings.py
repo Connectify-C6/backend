@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-pgr%2-&rt)6y=ch7qm&_0k@^-+ep*qnvc*&hq$+y8qy&wzz6=h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['connectify-c6.up.railway.app', 'localhost']
 
 
 # Application definition
@@ -39,15 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login',
     'community',
+    'profile_user',
+    'invitation',
+    'report',
     'post',
     'notification',
+    'comment',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -58,7 +62,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,12 +86,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '', # sesuaikan dengan password postgresql anda
-        'HOST': 'localhost',
-        'PORT': '5432',     # sesuaikan dengan port postgresql anda
-        'OPTIONS': {
-            'options': '-c search_path=skylark',    # sesuaikan dengan nama database anda
-        }
+        'PASSWORD': 'lulusrpl100%', # sesuaikan dengan password postgresql anda
+        'HOST': 'db.nlopyspyltpbobrvazbs.supabase.co',
+        'PORT': '5432',     # sesuaikan dengan port postgresql anda   
     }
 }
 
