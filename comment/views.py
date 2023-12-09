@@ -7,9 +7,9 @@ from community.models import Anggota
 from post.models import Post
 from notification.models import Notification
 
-def get_comments(request, id):
+def get_comments(post_id):
     data=[]
-    post = Post.objects.get(id=id)
+    post = Post.objects.get(id=post_id)
     comments = Comment.objects.filter(post=post)
     
     for comment in comments:
@@ -19,7 +19,7 @@ def get_comments(request, id):
             "content" : comment.content,
             "date" : comment.created_at
         })
-    return JsonResponse(data, safe=False)
+    return data
 
 def get_replies(request, id):
     data=[]
