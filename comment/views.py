@@ -7,19 +7,19 @@ from community.models import Anggota
 from post.models import Post
 from notification.models import Notification
 
-def get_comments(request, id):
+def get_comments(post_id):
     data=[]
-    post = Post.objects.get(id=id)
+    post = Post.objects.get(id=post_id)
     comments = Comment.objects.filter(post=post)
     
     for comment in comments:
         data.append({
             "pk" : comment.pk,
-            "author" : comment.author.user,
+            "author" : comment.author.user.username,
             "content" : comment.content,
             "date" : comment.created_at
         })
-    return JsonResponse(data, safe=False)
+    return data
 
 def get_replies(request, id):
     data=[]
@@ -29,7 +29,7 @@ def get_replies(request, id):
     for reply in replies:
         data.append({
             "pk" : reply.pk,
-            "author" : reply.author.user,
+            "author" : reply.author.user.username,
             "content" : reply.content,
             "date" : reply.created_at
         })
@@ -41,7 +41,7 @@ def create_comment(request, id):
         user = request.user
         if request.method == "POST":
             post = Post.objects.get(pk=id)
-            author = Anggota.objects.get(user=user)
+            author = Anggota.objects.get(user=user, community=post.community)
             content = (json.loads(request.body)
                        .get('content'))
             
@@ -82,7 +82,7 @@ def create_reply(request, id):
         this_user = request.user
         if request.method == "POST":
             comment = Comment.objects.get(pk=id)
-            author = Anggota.objects.get(user=this_user)
+            author = Anggota.objects.get(user=this_user, community=comment.post.community)
             content = (json.loads(request.body)
                        .get('content'))
             

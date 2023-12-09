@@ -5,23 +5,64 @@ from .models import Post
 from community.models import Community, Anggota
 from login.models import UserProfile
 from notification.models import Notification
+from comment.views import get_comments
 import json
 
+def get_posts_in_community(community_name):
+    data = []
+    community = Community.objects.get(nama_community=community_name)
+    posts = Post.objects.filter(community=community)
+    
+    for post in posts:
+        data.append({
+        "pk" : post.pk,
+        "author" : post.author.user.username,
+        "isi" : post.isi,
+        "jumlah_like" : post.jumlah_like,
+        "jumlah_dislike" : post.jumlah_dislike,
+        "jumlah_komen" : post.jumlah_komen,
+        "created_at" : post.created_at,
+    })
+    return data
+
+def show_community(request, community_name):
+    community = Community.objects.get(nama_community=community_name)
+    posts = get_posts_in_community(community_name=community_name)
+    
+    context = {
+        'community' : community,
+        'posts' : posts,
+        'user' : request.user
+    }
+    return render(request,'show_community_posts.html',context)
+
+def show_post_detail(request, community_name, id):
+    community = Community.objects.get(nama_community=community_name)
+    post = Post.objects.get(id=id)
+    context = {
+        'community' : community,
+        'post' : post,
+        'comments' : get_comments(id),
+        'user' : request.user
+    }
+    return render(request, 'detail_post.html', context)
+
 @csrf_exempt
-def create_post(request):
+def create_post(request, community_name):
     if request.user.is_authenticated:
         if request.method == "POST":
             data = json.loads(request.body)
             isi = data.get("isi")
-            community_id = data.get("community_id")  # Get community ID from request data
+            community = Community.objects.get(nama_community=community_name)  # Get community ID from request data
             author = request.user
 
             # Check if author is a member of the specified community
-            if Anggota.objects.filter(user=author, community_id=community_id).exists():
-                anggota = Anggota.objects.get(user=author, community_id=community_id)
+            if Anggota.objects.filter(user=author, community=community).exists():
+                anggota = Anggota.objects.get(user=author, community=community)
                 post = Post.objects.create(
                     isi=isi,
                     author=anggota,
+                    community=community
                 )
                 return JsonResponse({"message": "Post berhasil dibuat",
                                     "isi": post.isi,
