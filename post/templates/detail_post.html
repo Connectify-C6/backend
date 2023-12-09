@@ -22,8 +22,10 @@
           </div>
 
           <div class="m-2">
-            <i class="btn bi bi-hand-thumbs-up p-2">{{post.jumlah_like}}</i>
-            <i class="btn bi bi-hand-thumbs-down p-2">{{post.jumlah_dislike}}</i>
+            <button id="like-button-{{ post.id }}" class="like-button btn btn-primary btn-sm">Like</button>
+          <span id="like-count-{{ post.id }}">{{ post.jumlah_like }}</span>
+          <button id="dislike-button-{{ post.id }}" class="dislike-button btn btn-secondary btn-sm">Dislike</button>
+          <span id="dislike-count-{{ post.id }}">{{ post.jumlah_dislike }}</span>
             <i class="btn bi bi-chat-right p-2">{{post.jumlah_komen}}</i>
           </div>
         </div>
@@ -69,5 +71,38 @@
     </div>
   </div>
 </div>
+<script>
+  document.getElementById('like-button-{{ post.id }}').addEventListener('click', function(e) {
+      e.preventDefault();
+      handleLikeDislike('{{ post.id }}', 'like');
+  });
+
+  document.getElementById('dislike-button-{{ post.id }}').addEventListener('click', function(e) {
+      e.preventDefault();
+      handleLikeDislike('{{ post.id }}', 'dislike');
+  });
+
+  function handleLikeDislike(postId, action) {
+      fetch(`/post/${postId}/${action}/`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+          },
+          body: JSON.stringify({
+              post_id: postId,
+              community_id: '{{ community.id }}'
+          })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload(); // Refresh the page to show updated counts
+        } else {
+          console.error('Error in response:', response);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  }
+</script>
 
 {% endblock content %}
