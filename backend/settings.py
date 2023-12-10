@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-pgr%2-&rt)6y=ch7qm&_0k@^-+ep*qnvc*&hq$+y8qy&wzz6=h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ['connectify-c6.up.railway.app', 'localhost']
 
 # Application definition
 
@@ -86,8 +85,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'sql2133', # sesuaikan dengan password postgresql anda
-        'HOST': 'localhost',
+        'PASSWORD': 'lulusrpl100%', # sesuaikan dengan password postgresql anda
+        'HOST': 'db.nlopyspyltpbobrvazbs.supabase.co',
         'PORT': '5432',     # sesuaikan dengan port postgresql anda   
     }
 }
