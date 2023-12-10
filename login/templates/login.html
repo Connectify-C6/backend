@@ -1,8 +1,17 @@
 {% extends 'base.html' %} {% load static %} {% block meta %}
 <title>Login User</title>
+<style>
+	#loginButton.loading {
+		cursor: not-allowed;
+		opacity: 0.7;
+	}
+</style>
 <script>
 	function login(event) {
 		event.preventDefault();
+		const loginButton = document.getElementById("loginButton");
+		loginButton.disabled = true; // Disable the button to prevent multiple submissions
+		loginButton.classList.add("loading");
 		const username = document.getElementById("username").value;
 		const password = document.getElementById("password").value;
 		fetch("/auth/login/", {
@@ -14,13 +23,26 @@
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				if (data.message) {
-					alert(data.message);
-				}
+				showAlert("Login Success!", "success");
+				window.location.href = `/profile/${username}/`;
 			})
 			.catch((error) => {
 				console.error("Error:", error);
+				showAlert("Login Failed!", "error");
+			})
+			.finally(() => {
+				loginButton.disabled = false; // Enable the button after the request is complete
+				loginButton.classList.remove("loading"); // Remove loading class
 			});
+	}
+	function showAlert(message, type) {
+		Toastify({
+			text: message,
+			duration: 3000,
+			gravity: "bottom",
+			position: "right",
+			backgroundColor: type === "success" ? "#4CAF50" : "#F44336",
+		}).showToast();
 	}
 </script>
 {% endblock meta %} {% block content %}
@@ -45,7 +67,13 @@
 			class="px-4 py-2 rounded-md border-2"
 			required
 		/>
-		<button type="submit" class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white">Login</button>
+		<button
+			type="submit"
+			id="loginButton"
+			class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white"
+		>
+			Login
+		</button>
 	</form>
 	<br />
 	<p>Doesn't have account yet? <a href="/auth/register" class="text-blue-500">Register</a></p>
