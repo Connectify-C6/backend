@@ -17,13 +17,14 @@ def get_comments(post_id):
             "pk" : comment.pk,
             "author" : comment.author.user.username,
             "content" : comment.content,
-            "date" : comment.created_at
+            "created_at" : comment.created_at,
+            "replies" : get_replies(comment.pk)
         })
     return data
 
-def get_replies(request, id):
+def get_replies(comment_id):
     data=[]
-    comment = Comment.objects.get(id=id)
+    comment = Comment.objects.get(id=comment_id)
     replies = Reply.objects.filter(comment=comment)
     
     for reply in replies:
@@ -31,9 +32,9 @@ def get_replies(request, id):
             "pk" : reply.pk,
             "author" : reply.author.user.username,
             "content" : reply.content,
-            "date" : reply.created_at
+            "created_at" : reply.created_at
         })
-    return JsonResponse(data, safe=False)
+    return data
 
 @csrf_exempt
 def create_comment(request, id):

@@ -48,7 +48,7 @@
             {% for post in posts %}
               <div class="container mt-3">
                 <div class="row">
-                  <a href="./{{post.pk}}/" class="card post-card text-decoration-none hover:shadow-lg">
+                  <a href="../../post/{{community.nama_community}}/{{post.pk}}/" class="card post-card text-decoration-none hover:shadow-lg">
                     <div class="card-body m-3">
                       <h5 class="card-title">{{post.author}}</h5>
                       <p class="card-text">{{post.isi}}</p>
