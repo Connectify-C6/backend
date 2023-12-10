@@ -1,3 +1,4 @@
+from calendar import calendar
 from django.shortcuts import render
 # import csrf_exempt
 from django.views.decorators.csrf import csrf_exempt
@@ -6,20 +7,26 @@ from .models import Community, Anggota
 from invitation.models import CommunityInvitation, FriendRequest, Invitation
 from login.models import UserProfile
 from django.contrib.auth.models import User
-# import json
+from django.core import serializers
 from rest_framework.parsers import JSONParser
 import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+
+@login_required(login_url='/auth/login/')
 def index(request):
     # check if user is authenticated
     if request.user.is_authenticated:
         # if method is post
-        list_community = list(Community.objects.all().values_list('nama_community', flat=True))
-        return JsonResponse({"Message":"Hello World",
-                         "User":request.user.username,
-                         "list_community": list_community
-                         }, status=200)
+        list_community = Community.objects.all()
+        list_community_json = serializers.serialize('json', list_community)
+        context = {
+        "list_community": list_community_json,
+        "user": request.user
+        }
+        return render(request, 'community.html', context)
                          
     else:
         return JsonResponse({"Message":"user belum login"}, status=400)
@@ -99,26 +106,25 @@ def join_community(request):
 def get_community_member(request, community_id):
     # check if user is authenticated
     if request.user.is_authenticated:
-        # if method is post
-        if request.method == "GET":
-            # get community based on id
-            
-            community = Community.objects.get(id=community_id)
-            # get all anggota from community
-            anggota = Anggota.objects.filter(community=community)
-            # get all user from anggota
-            user = UserProfile.objects.filter(user__in=anggota.values_list('user', flat=True))
-            # return all user
-            return JsonResponse({"message": "Berhasil mendapatkan semua anggota",
-                                 "nama_community": community.nama_community,
-                                 "leader": community.leader.username,
-                                 "anggota": list(user.values_list('user__username', flat=True))
-                                 }, status=200)
-        else:
-            return JsonResponse({"message": "Method not allowed"}, status=400)
+        # get community based on id
+        community = Community.objects.get(id=community_id)
+        # get all anggota from community
+        anggota = Anggota.objects.filter(community=community)
+        # get all user from anggota
+        user = UserProfile.objects.filter(user__in=anggota.values_list('user', flat=True))
+        # return all user
+        is_leader = community.leader == request.user
+        context = {
+            "user": request.user,
+            "is_leader": is_leader,
+            "community": community,
+            "anggota": user
+        }
+        return render(request, 'community_member.html', context)
     else:
         return JsonResponse({"message": "User belum login"}, status=400)
     
+
 @csrf_exempt
 def send_invitation(request):
     # check if user is authenticated

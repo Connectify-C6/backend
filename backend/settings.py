@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['connectify-c6.up.railway.app', 'localhost']
 
-
 # Application definition
 
 INSTALLED_APPS = [
