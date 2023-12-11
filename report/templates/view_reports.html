@@ -1,21 +1,21 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block meta %}
-<title>View Reports</title>
-{% endblock meta %}
-{% block content %}
-<div class="container mx-auto mt-8">
-    <h1 class="text-3xl font-bold mb-6">View Reports</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Reports</title>
+</head>
+<body>
+    <h1>View Reports</h1>
+    <ul>
         {% for report in reports %}
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <p class="text-blue-500 font-bold">Reported User: {{ report.reported_user.username }}</p>
-                <p class="text-blue-500 font-bold">Reporter: {{ report.reporter.username }}</p>
-                <p class="text-blue-500 font-bold">Reason: {{ report.reason }}</p>
-            </div>
+            <li>
+                <strong>Reported User:</strong> {{ report.reported_user.username }}<br>
+                <strong>Reporter:</strong> {{ report.reporter.username }}<br>
+                <strong>Reason:</strong> {{ report.reason }}<br>
+            </li>
         {% empty %}
-            <p>No reports found.</p>
+            <li>No reports found.</li>
         {% endfor %}
-    </div>
-</div>
-{% endblock content %}
+    </ul>
+</body>
+</html>
