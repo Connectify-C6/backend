@@ -10,7 +10,7 @@ from notification.models import Notification
 def get_comments(post_id):
     data=[]
     post = Post.objects.get(id=post_id)
-    comments = Comment.objects.filter(post=post)
+    comments = Comment.objects.filter(post=post).order_by('-created_at')
     
     for comment in comments:
         data.append({
@@ -53,6 +53,10 @@ def create_comment(request, id):
                 )
             new_comment.save()
             
+            # update count comment
+            post.jumlah_komen += 1
+            post.save()
+            
             # create notification
             if user != post.author.user:
                 notif_to_poster = Notification(
@@ -93,6 +97,10 @@ def create_reply(request, id):
                     content = content,
                 )
             new_reply.save()
+            
+            # update count comment
+            comment.post.jumlah_komen += 1
+            comment.post.save()
             
             # create notification
             if this_user != comment.author.user:
