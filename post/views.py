@@ -1,4 +1,3 @@
-from operator import is_
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -31,18 +30,11 @@ def get_posts_in_community(community_name):
 def show_community(request, community_name):
     community = Community.objects.get(nama_community=community_name)
     posts = get_posts_in_community(community_name=community_name)
-    if (request.user.is_authenticated):
-        is_member = Anggota.objects.filter(user=request.user, community=community).exists()
-        is_leader = community.leader == request.user
-    else:
-        is_member = False
-        is_leader = False
+    
     context = {
         'community' : community,
         'posts' : posts,
-        'user' : request.user,
-        'is_member' : is_member,
-        'is_leader' : is_leader,
+        'user' : request.user
     }
     return render(request,'show_community_posts.html',context)
 

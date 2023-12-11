@@ -1,23 +1,18 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block meta %}
-<title>Report User</title>
-{% endblock meta %}
-{% block content %}
-<div class="h-screen flex flex-col items-center p-10">
-    <h1 class="text-3xl font-bold mb-6">Report User</h1>
-    <div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
-        <form method="post" action="{% url 'report:report_user' reported_user.id %}" class="w-full max-w-lg">
-            {% csrf_token %}
-            <!-- Add fields for reporting -->
-            <div class="mb-4">
-                <label for="reason" class="block text-gray-700 font-bold mb-2">Reason for reporting:</label>
-                <textarea id="reason" name="reason" rows="4" cols="50" class="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
-            </div>
-            <div class="mb-6">
-                <input type="submit" value="Submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock content %}
+<!-- users/report_user.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report User</title>
+</head>
+<body>
+    <h1>Report User</h1>
+    <form method="post" action="{% url 'report:report_user' reported_user.id %}">
+        {% csrf_token %}
+        <!-- Add fields for reporting -->
+        <label for="reason">Reason for reporting:</label><br>
+        <textarea id="reason" name="reason" rows="4" cols="50"></textarea><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
