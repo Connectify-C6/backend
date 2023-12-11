@@ -1,4 +1,5 @@
 from calendar import calendar
+from operator import inv
 from django.shortcuts import render
 # import csrf_exempt
 from django.views.decorators.csrf import csrf_exempt
@@ -150,6 +151,8 @@ def send_invitation(request):
                 # check if user is already in community
                     if Anggota.objects.filter(community=community, user=receiver).exists():
                         return JsonResponse({"message": "User sudah bergabung dalam community ini"}, status=400)
+                    elif CommunityInvitation.objects.filter(community=community, receiver=receiver).exists():
+                        return JsonResponse({"message": "User sudah mendapat invitation dari community ini"}, status=400)
                     else:
                 # create community invitation
                         community_invitation = CommunityInvitation.objects.create(
@@ -160,12 +163,50 @@ def send_invitation(request):
                             is_responded=False
                         )
                         community_invitation.save()
-                        return JsonResponse({"message": "Invitation berhasil dikirim"}, status=200)
+                        return JsonResponse({"message": "Invitation berhasil dikirim",
+                                             "success": True
+                                             }, status=200)
                 else:
-                    return JsonResponse({"message": "User bukan leader dari community ini"}, status=400)
+                    print("User bukan leader dari community ini")
+                    return JsonResponse({"message": "User bukan leader dari community ini",
+                                         "success": False
+                                         }, status=400)
             else:
-                return JsonResponse({"message": "Community tidak ditemukan"}, status=400)
+                print("Community tidak ditemukan")
+                return JsonResponse({"message": "Community tidak ditemukan",
+                                     "success": False
+                                     }, status=400)
         else:
-            return JsonResponse({"message": "Method not allowed"}, status=400)
+            print("Method not allowed")
+            return JsonResponse({"message": "Method not allowed",
+                                 "success": False 
+                                 }, status=400)
     else:
+        print("User belum login")
         return JsonResponse({"message": "User belum login"}, status=400)
+
+@csrf_exempt
+def show_all_user(request, community_id):
+    if request.user.is_authenticated:
+            print(request.body)
+            community = Community.objects.get(id=community_id)
+            community_members = Anggota.objects.filter(community__id=community_id).values_list('user__username', flat=True)
+            invited = CommunityInvitation.objects.filter(community__id=community_id).values_list('receiver__username', flat=True)
+
+            list_user = list(UserProfile.objects.exclude(user__username__in=community_members).exclude(user__username__in=invited).values('user__username', 'bio'))
+            print(str(list_user))
+            # return all user
+            context = {
+                    "list_user": list_user,
+                    "community": community,
+                }
+            print(context) 
+            return render(request, 'all_user.html', context)
+
+        
+    
+    else:
+        return JsonResponse({"Message": "user belum login"}, status=401)
+    
+
+    
