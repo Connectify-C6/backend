@@ -1,16 +1,16 @@
 {% extends 'base.html' %} 
 {% load static %} 
 {% block meta %}
-<title>Community </title>
+<title>Connectify - Community Member</title>
 {% endblock meta %} 
 {% block content %}
 
 <div class="h-screen flex flex-col items-center p-10" style="width: 100%;"> 
 
 	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
-        <p style="text-align: center;">
+        <h5 style="text-align: center; font-size: 2em;">
             {{community.nama_community}} members
-        </p>
+        </h5>
         <div class="card" id= "results-container" style="width: 100%;">
             {% for person in anggota %}
 
