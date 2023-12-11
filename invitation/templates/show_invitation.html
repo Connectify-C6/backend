@@ -1,0 +1,126 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block meta %}
+<title>Invitations </title>
+{% endblock meta %} 
+{% block content %}
+
+<div class="h-screen flex flex-col items-center p-10" style="width: 100%;">
+
+	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
+        <h1  style="text-align: center;"> <strong>
+            Community Invitations
+        </strong>
+            </h1>
+         {% if not list_community_invitation %}
+        <h1>No Community Invitations Found</h1>
+        {% else %}
+        
+        {% for invitation in list_community_invitation %}
+        <div class="card mb-3" style="width: 100%;">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <p class="card-text">{{ invitation.sender}} invites you to join {{invitation.community.nama_community}}</p>
+                <div>
+                    <a href="#" class="btn btn-success acc-button" data-id="{{ invitation.id }}">Accept</a>
+                    <a href="#" class="btn btn-danger dec-button" data-id="{{ invitation.id }}">Decline</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    <hr>
+    <h1  style="text-align: center;"> <strong>
+        Friend Request
+    </strong>
+        </h1>
+        {% if not list_friend_request %}
+        <h1>No Friend Request Found</h1>
+        {% else %}
+        
+        {% for invitation in list_friend_request %}
+        <div class="card mb-3" style="width: 100%;">
+            <div class="card-body d-flex align-items-center justify-content-between">
+                <p class="card-text">{{invitation.sender}} sends you a friend request</p>
+                <div>
+                    <a href="#" class="btn btn-success">Accept</a>
+                    <a href="#" class="btn btn-danger">Decline</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+
+
+	</div>
+
+
+</div>
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.acc-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/invitation/accept/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    community: event.target.getAttribute('data-community'),
+                    invitation_id: event.target.getAttribute('data-id')
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    event.target.parentElement.parentElement.parentElement.remove();
+                    showAlert("Invitation accepted", 'success')
+                    window.location.href = '/invitation/';
+                }
+                else {
+                    showAlert("Failed to accept invitation", 'failed')
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.dec-button').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            fetch('/invitation/decline/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    community: event.target.getAttribute('data-community'),
+                    invitation_id: event.target.getAttribute('data-id')
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    event.target.parentElement.parentElement.parentElement.remove();
+                    showAlert('Invitation declined', 'success')
+                    window.location.href = '/invitation/';
+                }
+                else {
+                    showAlert('Failed to decline invitation', 'failed')
+                }
+
+            });
+        });
+    });
+	function showAlert(message, type) {
+		Toastify({
+			text: message,
+			duration: 3000,
+			gravity: "bottom",
+			position: "right",
+			backgroundColor: type === "success" ? "#4CAF50" : "#F44336",
+		}).showToast();
+	}
+</script>
+{% endblock scripts %}
+
+{% endblock content %}
+
+
