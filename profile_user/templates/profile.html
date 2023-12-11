@@ -1,38 +1,76 @@
-{% extends 'base.html' %} {% load static %} {% block meta %}
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %}
 <title>{{ username }} - Profile</title>
-{% endblock meta %} {% block content %}
+{% endblock meta %}
+{% block content %}
 <div class="h-screen flex flex-col items-center p-10">
-	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
-		<div class="flex items-center mb-4">
-			<svg
-				class="w-8 h-8 mr-2 text-blue-500"
-				fill="none"
-				stroke="currentColor"
-				viewBox="0 0 24 24"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M12 21v-2M12 3v-2M4 12h2M18 12h2M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-				></path>
-			</svg>
+    {% if request.user.username == username %}
+        <div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
+            <div class="flex items-center mb-4">
+                <svg
+                    class="w-8 h-8 mr-2 text-blue-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 21v-2M12 3v-2M4 12h2M18 12h2M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                </svg>
 
-			<h1 class="text-3xl font-bold">Hello, {{ username }}!</h1>
+                <h1 class="text-3xl font-bold">Hello, {{ username }}!</h1>
+            </div>
+            <div class="text-lg">
+                <p><strong>Role:</strong> {{ role }}</p>
+                <p><strong>Bio:</strong> {{ bio }}</p>
+            </div>
+        </div>
+    {% else %}
+		<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
+			<div class="flex items-center mb-4">
+				<svg
+					class="w-8 h-8 mr-2 text-blue-500"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 21v-2M12 3v-2M4 12h2M18 12h2M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+					></path>
+				</svg>
+
+				<h1 class="text-3xl font-bold">It's {{ username }}'s profile!</h1>
+			</div>
+			<div class="text-lg">
+				<p><strong>Role:</strong> {{ role }}</p>
+				<p><strong>Bio:</strong> {{ bio }}</p>
+			</div>
 		</div>
-		<div class="text-lg">
-			<p><strong>Role:</strong> {{ role }}</p>
-			<p><strong>Bio:</strong> {{ bio }}</p>
-		</div>
-	</div>
-	
-	{% if request.user == this_user.user %}
-		<a href="/profile/form_update/">
-			<button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
-				Update Profile
-			</button>
-		</a>
-	{% endif %}
+    {% endif %}
+    
+    {% if request.user.username == username %}
+        <a href="/profile/form_update/">
+            <button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
+                Update Profile
+            </button>
+        </a>
+    {% endif %}
+    
+    {% if request.user.username != username and not already_reported %}
+        <a href="{% url 'report:report_user' reported_user_id=this_user.id %}">
+            <button type="button" class="m-4 px-4 py-2 rounded-md bg-red-500 hover:bg-red-700 text-white">
+                Report User
+            </button>
+        </a>
+    {% endif %}
 </div>
 {% endblock content %}
