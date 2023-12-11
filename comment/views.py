@@ -10,20 +10,21 @@ from notification.models import Notification
 def get_comments(post_id):
     data=[]
     post = Post.objects.get(id=post_id)
-    comments = Comment.objects.filter(post=post)
+    comments = Comment.objects.filter(post=post).order_by('-created_at')
     
     for comment in comments:
         data.append({
             "pk" : comment.pk,
             "author" : comment.author.user.username,
             "content" : comment.content,
-            "date" : comment.created_at
+            "created_at" : comment.created_at,
+            "replies" : get_replies(comment.pk)
         })
     return data
 
-def get_replies(request, id):
+def get_replies(comment_id):
     data=[]
-    comment = Comment.objects.get(id=id)
+    comment = Comment.objects.get(id=comment_id)
     replies = Reply.objects.filter(comment=comment)
     
     for reply in replies:
@@ -31,9 +32,9 @@ def get_replies(request, id):
             "pk" : reply.pk,
             "author" : reply.author.user.username,
             "content" : reply.content,
-            "date" : reply.created_at
+            "created_at" : reply.created_at
         })
-    return JsonResponse(data, safe=False)
+    return data
 
 @csrf_exempt
 def create_comment(request, id):
@@ -51,6 +52,10 @@ def create_comment(request, id):
                     content = content,
                 )
             new_comment.save()
+            
+            # update count comment
+            post.jumlah_komen += 1
+            post.save()
             
             # create notification
             if user != post.author.user:
@@ -92,6 +97,10 @@ def create_reply(request, id):
                     content = content,
                 )
             new_reply.save()
+            
+            # update count comment
+            comment.post.jumlah_komen += 1
+            comment.post.save()
             
             # create notification
             if this_user != comment.author.user:

@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 def get_posts_in_community(community_name):
     data = []
     community = Community.objects.get(nama_community=community_name)
-    posts = Post.objects.filter(community=community)
+    posts = Post.objects.all().filter(community=community).order_by("-created_at")
     
     for post in posts:
         data.append({
