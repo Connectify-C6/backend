@@ -87,7 +87,8 @@
                               class="bi bi-chat m-2">&nbsp;see replies</button>
 
                       {% if request.user.username == comment.author %}
-                      <button class="bi bi-trash3 m-2">&nbsp;delete</button>
+                      <button class="bi bi-trash3 m-2"
+                              onclick="handleDeleteComment('{{comment.pk}}')">&nbsp;delete</button>
                       {% endif %}
                     </div>
 
@@ -185,10 +186,32 @@
             content: document.getElementById(`reply-body-${commentId}`).value
         })
     })
-    .then(response => {
-      if (response.ok) {
-        window.location.reload(); // Refresh the page
-        location.href = `#replies-comment-${commentId}`;
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === "Reply berhasil dibuat") {
+        showAlert(data.message, "success");
+        localStorage.setItem('openCollapsibleCommentId', commentId);
+        window.location.reload();
+      } else {
+        console.error('Error in response:', response);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function handleDeleteComment(commentId){
+    fetch(`../../../comment/delete-comment/${commentId}/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === "Comment berhasil dihapus") {
+        showAlert(data.message, "success");
+        window.location.reload();
       } else {
         console.error('Error in response:', response);
       }
@@ -227,6 +250,15 @@
 			backgroundColor: type === "success" ? "#4CAF50" : "#F44336",
 		}).showToast();
 	}
+
+  // Wait until the page is fully reloaded before showing the collapsible
+  window.onload = function() {
+    const openCollapsibleCommentId = localStorage.getItem('openCollapsibleCommentId');
+    if (openCollapsibleCommentId) {
+      $(`#replies-comment-${openCollapsibleCommentId}`).collapse('show');
+      localStorage.removeItem('openCollapsibleCommentId');
+    }
+  }
 </script>
 
 {% endblock content %}

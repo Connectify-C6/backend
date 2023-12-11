@@ -79,7 +79,9 @@ def create_comment(request, id):
 def delete_comment(request, id):
     this_comment = Comment.objects.get(pk=id)
     this_comment.delete()
-    return redirect('')
+    return JsonResponse(
+            {"message": "Comment berhasil dihapus"}, 
+            status=200)
 
 @csrf_exempt
 def create_reply(request, id):
@@ -123,5 +125,7 @@ def create_reply(request, id):
 def delete_reply(request, id):
     this_reply = Reply.objects.get(pk=id)
     this_reply.delete()
-    return redirect('')
+    return JsonResponse(
+            {"message": "Reply berhasil dihapus"}, 
+            status=200)
     
