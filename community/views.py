@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required(login_url='/auth/login/')
-def index(request):
+def search(request):
     # check if user is authenticated
     if request.user.is_authenticated:
         # if method is post
@@ -32,6 +32,22 @@ def index(request):
     else:
         return JsonResponse({"Message":"user belum login"}, status=400)
 
+@login_required(login_url='/auth/login/')
+def index(request):
+    if request.user.is_authenticated:
+        user_communities = Anggota.objects.filter(user=request.user)
+
+        context = {
+            'user_communities': user_communities,
+            'user': request.user,
+            
+        }
+        return render(request, 'my_community.html', context)
+    else:
+        return JsonResponse({"Message": "user belum login"}, status=401)
+    
+
+    
 
 @csrf_exempt
 def create_community(request):
@@ -202,9 +218,6 @@ def show_all_user(request, community_id):
                 }
             print(context) 
             return render(request, 'all_user.html', context)
-
-        
-    
     else:
         return JsonResponse({"Message": "user belum login"}, status=401)
     

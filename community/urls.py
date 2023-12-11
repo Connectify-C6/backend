@@ -6,6 +6,7 @@ app_name = 'community'
 
 urlpatterns = [
     path('', index, name='index'),
+    path('search/', search, name='search'),
     path('create/', create_community, name='create_community'),
     # GET community member with member id 
     path('<int:community_id>/member/', get_community_member, name='get_community_member'),
