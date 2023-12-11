@@ -14,6 +14,7 @@ urlpatterns = [
     path('join/', join_community, name='join_community'),
     # send invitation
     path('invite/', send_invitation, name='send_invitation'),
+    path('<str:community_name>/', show_community, name='show_community'),
     # show all user
     path('user/<int:community_id>/', show_all_user, name='show_all_user'),
 ]
