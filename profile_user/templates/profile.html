@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load static %} {% block meta %}
-<title>{{ user.username }} - Profile</title>
+<title>{{ username }} - Profile</title>
 {% endblock meta %} {% block content %}
 <div class="h-screen flex flex-col items-center p-10">
 	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
@@ -19,18 +19,20 @@
 				></path>
 			</svg>
 
-			<h1 class="text-3xl font-bold">Hello, {{ user.username }}!</h1>
+			<h1 class="text-3xl font-bold">Hello, {{ username }}!</h1>
 		</div>
 		<div class="text-lg">
 			<p><strong>Role:</strong> {{ role }}</p>
 			<p><strong>Bio:</strong> {{ bio }}</p>
 		</div>
 	</div>
-
-	<a href="/profile/form_update/">
-		<button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
-			Update Profile
-		</button>
-	</a>
+	
+	{% if request.user == this_user.user %}
+		<a href="/profile/form_update/">
+			<button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
+				Update Profile
+			</button>
+		</a>
+	{% endif %}
 </div>
 {% endblock content %}
