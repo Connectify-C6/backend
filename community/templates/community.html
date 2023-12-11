@@ -1,0 +1,89 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block meta %}
+<title>Community </title>
+{% endblock meta %} 
+{% block content %}
+
+<div class="h-screen flex flex-col items-center p-10" style="width: 100%;">
+    <div class="d-flex justify-content-center">
+        <a href="/community/create/">
+        <button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
+            Create Community
+        </button>
+        </a>
+        </div>  
+
+	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
+
+		<div class="input-group">
+            <input type="text" id="search-input" class="form-control rounded" placeholder="Search community" aria-label="Search" aria-describedby="search-addon" />
+            <button type="button" id="search-button" class="btn rounded-md bg-blue-500 hover:bg-blue-700 text-white" data-mdb-ripple-init>search</button>
+          </div>
+
+
+        <div class="d-flex justify-content-center" id="not-found-message">
+        </div>
+        <div class="card" id= "results-container" style="width: 100%;">
+            
+        </div>
+	</div>
+
+
+</div>
+{% block scripts %}
+<script>
+    console.log('{{list_community|escapejs }}');
+    var listCommunity = JSON.parse('{{ list_community|escapejs }}');
+    var resultsContainer = document.getElementById('results-container');
+    var notFoundMessage = document.getElementById('not-found-message');
+    console.log(listCommunity);
+    
+    document.getElementById("search-button").addEventListener('click', function() {
+        var searchInput = document.getElementById("search-input").value;
+
+        var results = listCommunity.filter(function(community) {
+            return community.fields.nama_community.toLowerCase().includes(searchInput.toLowerCase());
+        });
+
+        resultsContainer.innerHTML = '';
+        notFoundMessage.innerHTML = '';
+        // Create a new card for each result
+        if (results.length === 0){
+            notFoundMessage.innerHTML += `<p>No results for ${searchInput}</p>`;
+        } else { results.forEach(function(result) {
+            var card = `
+                    <a href="/post/${result.fields.nama_community}/">
+                    <div class="card-body">
+                    <h5 class="card-title"><strong>${result.fields.nama_community}</strong></h5>
+                    <p class="card-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16" style="display: inline-block; vertical-align: middle;">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>
+                    <span style="display: inline-block; vertical-align: middle;">${result.fields.jumlah_anggota} Members</span>
+                    </p>
+                    <p class="card-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="display: inline-block; vertical-align: middle;">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                        </svg> 
+                        <span style="display: inline-block; vertical-align: middle;">${result.fields.detail_community.length > 100 ? result.fields.detail_community.substring(0, 100) + '...' : result.fields.detail_community}</span>
+                        
+                    </p>
+                    </div>
+                    <a>
+                    
+                `;
+
+            // Add the card to the results container
+                resultsContainer.innerHTML += card;
+        });
+        }
+
+    });
+
+</script>
+{% endblock scripts %}
+{% endblock content %}
+
+

@@ -1,12 +1,17 @@
-from django.shortcuts import render
+import re
+from django.shortcuts import render,redirect
 from report.models import Report
 from django.contrib.auth.models import User
-
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from login.models import UserProfile
+from django.contrib.auth import logout
 
 def report_user(request, reported_user_id):
+    if not request.user.is_authenticated:
+        return redirect('login:login_user')
+    
     reported_user = get_object_or_404(User, pk=reported_user_id)
 
     if request.method == 'GET':
@@ -19,7 +24,13 @@ def report_user(request, reported_user_id):
         user_profile = get_user_profile_by_id(reported_user.id)
         user_profile.count_reported += 1
         user_profile.save()
+        print(reporter.username)
+        print(user_profile.count_reported)
         
+        # Check if count_reported exceeds the limit
+        if user_profile.count_reported > 5:
+            reported_user.delete()
+            return redirect(reverse('profile_user:get_profile_by_username', kwargs={'username': reporter.username}))
         # Create a report instance
         report = Report.objects.create(
             reported_user=reported_user,
@@ -29,7 +40,7 @@ def report_user(request, reported_user_id):
         
         report.save()
         
-        return JsonResponse({'message': 'User reported successfully'})
+        return redirect(reverse('profile_user:get_profile_by_username', kwargs={'username': reported_user.username}))
     
 def get_user_profile_by_id(user_id):
     try:
