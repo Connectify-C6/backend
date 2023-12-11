@@ -40,7 +40,7 @@ def report_user(request, reported_user_id):
         
         report.save()
         
-        return redirect(reverse('profile_user:get_profile_by_username', kwargs={'username': reported_user.username}))
+        return redirect(reverse('profile_user:get_profile_by_username', kwargs={'username': reported_user.username}) + '?report_success=True')
     
 def get_user_profile_by_id(user_id):
     try:
