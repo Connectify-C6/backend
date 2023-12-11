@@ -33,10 +33,11 @@
 </div>
 {% block scripts %}
 <script>
+    console.log('{{list_community|escapejs }}');
     var listCommunity = JSON.parse('{{ list_community|escapejs }}');
     var resultsContainer = document.getElementById('results-container');
     var notFoundMessage = document.getElementById('not-found-message');
-
+    console.log(listCommunity);
     
     document.getElementById("search-button").addEventListener('click', function() {
         var searchInput = document.getElementById("search-input").value;
