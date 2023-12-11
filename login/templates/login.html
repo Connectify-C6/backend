@@ -24,7 +24,7 @@
 			.then((response) => response.json())
 			.then((data) => {
 				showAlert("Login Success!", "success");
-				window.location.href = `/profile/${username}/`;
+				window.location.href = `/community/`;
 			})
 			.catch((error) => {
 				console.error("Error:", error);
