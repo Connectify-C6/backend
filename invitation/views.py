@@ -12,8 +12,30 @@ import json
 from invitation.models import *
 from community.models import *
 from community.views import join_community  
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url='/auth/login')
+def index(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            list_community_invitation = CommunityInvitation.objects.filter(receiver=request.user, is_responded=False)
+            list_friend_request = FriendRequest.objects.filter(receiver=request.user)
+            # list of dict of community invitation : id, sender, community, pesan
+            list_community_invitation = list_community_invitation
+            # list of dict of friend request : id, sender, pesan
+            list_friend_request = list_friend_request
+            context = {"Message":"My Invitations",
+                             "user":request.user,
+                             "list_community_invitation": list_community_invitation,
+                            "list_friend_request": list_friend_request  
+                            }
+            print(context)
+            return render(request, "show_invitation.html", context)
+    else:
+        return HttpResponse({"Message":"user belum login"}, status=401)
 def index(request):
     if request.user.is_authenticated:
         if request.method == "GET":
