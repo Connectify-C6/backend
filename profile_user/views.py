@@ -47,7 +47,8 @@ def update_profile(request, username):
 def get_profile_by_username(request, username):
     # Fetch the requested user's profile
     print(request.user)
-    
+    report_success = request.GET.get('report_success') == 'True'
+    print(report_success)
     if not request.user.is_authenticated:
         return redirect('login:login_user')
     
@@ -59,13 +60,14 @@ def get_profile_by_username(request, username):
     
     # Check if the logged-in user has already reported this profile
     already_reported = Report.objects.filter(reported_user=user.user, reporter=logged_in_user).exists()
-
+    
     context = {
         "this_user": user.get_data(),
         "username": user.get_data()['username'],
         "role": user.role,
         "bio": user.bio,
-        "already_reported": already_reported
+        "already_reported": already_reported,
+        "report_success" : report_success
     }
 
     print(user.get_data())
