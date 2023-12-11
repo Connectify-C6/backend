@@ -60,7 +60,7 @@
     {% if request.user.username == username %}
         <a href="/profile/form_update/">
             <button type="submit" class="m-4 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white">
-                Update Profile
+                Edit Profile
             </button>
         </a>
     {% endif %}
@@ -68,9 +68,24 @@
     {% if request.user.username != username and not already_reported %}
         <a href="{% url 'report:report_user' reported_user_id=this_user.id %}">
             <button type="button" class="m-4 px-4 py-2 rounded-md bg-red-500 hover:bg-red-700 text-white">
-                Report User
+                Report User 
             </button>
         </a>
+        
+    {% endif %}
+
+    {% if report_success %}
+        <div class="h-screen flex flex-col items-center p-10">
+            <!-- Rest of your content -->
+
+            <!-- JavaScript code to display a popup -->
+            <script>
+                // Check if report_success is true and display a popup message
+                window.onload = function() {
+                    alert("Report Berhasil");
+                };
+            </script>
+        </div>
     {% endif %}
 </div>
 {% endblock content %}

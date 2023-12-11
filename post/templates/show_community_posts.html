@@ -73,7 +73,7 @@
 
       <div class="col-lg-3 mt-5">
         <div class="card p-3">
-          <a href="#">
+          <a href="/profile/{{community.leader}}">
           <p>
           Leader : {{community.leader}}
           </p>
@@ -182,7 +182,7 @@
             .then(data => {
                 if(data.message === "User berhasil diundang"){
                     console.log(data.message); 
-                    window.location.href = `/post/${communityName}/`;
+                    window.location.href = `/community/${communityName}/`;
                     
                 } else {
                     console.log(data.message);
