@@ -1,0 +1,76 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block meta %}
+<title>Community </title>
+{% endblock meta %} 
+{% block content %}
+
+<div class="h-screen flex flex-col items-center p-10" style="width: 100%;"> 
+
+	<div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6">
+        <p style="text-align: center;">
+            {{community.nama_community}} members
+        </p>
+        <div class="card" id= "results-container" style="width: 100%;">
+            {% for person in anggota %}
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2 d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm3.292 3.706c-.722-.573-1.675-.875-2.558-.956A4.002 4.002 0 0 1 4.732 9c-.874.08-1.841.383-2.565.965C.956 10.825 0 12.079 0 13.5a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5c0-1.422-.956-2.675-2.168-3.794z"/>
+                        </svg>
+                    </div>
+                    <div class="col-6">
+                        <p class="card-title">
+                            <strong>
+                            {{ person.user }}
+                            </strong>
+                        </p>
+                        <p class="card-text">{{ person.bio }}</p>
+                    </div>
+
+                    {% if person.user != user %}
+                        <div class="button-wrapper">
+                            <button class="m-1 px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-700 text-white invite-button" type="button" data-username="{{ person.user }}">Add Friend</button>
+                            <a href="{% url 'profile_user:get_profile_by_username' person.user.username %}" class="profile-link">
+                                <button class="m-1 px-4 py-2 rounded-md bg-green-500 hover:bg-green-700 text-white profile-button" type="button">View Profile</button>
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+	</div>
+
+
+</div>
+{% block scripts %}
+<script>
+        document.querySelectorAll('.invite-button').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            var username = this.getAttribute('data-username');
+            var communityName = '{{ community.nama_community }}';
+            console.log(username, communityName);
+            fetch('/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'receiver': username,
+                    'community_name': communityName,
+                    'pesan' : "You've been invited to join " + communityName + " community"
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+        });
+    });
+</script>
+{% endblock scripts %}
+{% endblock content %}
+
+

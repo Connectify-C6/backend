@@ -53,7 +53,9 @@
             notFoundMessage.innerHTML += `<p>No results for ${searchInput}</p>`;
         } else { results.forEach(function(result) {
             var card = `
-                    <a href="./${result.fields.nama_community}/">
+
+                    <a href="community/${result.fields.nama_community}/">
+
                     <div class="card-body">
                     <h5 class="card-title"><strong>${result.fields.nama_community}</strong></h5>
                     <p class="card-text">
